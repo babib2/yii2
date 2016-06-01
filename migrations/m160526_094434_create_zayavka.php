@@ -33,6 +33,6 @@ class m160526_094434_create_zayavka extends Migration
      */
     public function down()
     {
-        $this->dropTable('zayavka');
+        $this->dropTable('{{%zayavka}}');
     }
 }
