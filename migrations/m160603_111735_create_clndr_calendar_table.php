@@ -21,7 +21,7 @@ class m160603_111735_create_clndr_calendar_table extends Migration
             'id' => $this->primaryKey(),
             'text' => $this->string()->notNull(),
             'creator' => $this->integer()->notNull(),
-            'create_at_date' => $this->datetime()->notNull(),
+            'create_at_date' => $this->timestamp()->notNull(),
         ], $tableOptions);
 
          $this->addForeignKey('FK_creator','{{%clndr_calendar}}','creator','{{%clndr_user}}','id','CASCADE','CASCADE');

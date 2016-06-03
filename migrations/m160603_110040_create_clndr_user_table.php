@@ -25,7 +25,7 @@ class m160603_110040_create_clndr_user_table extends Migration
             'password' => $this->string()->notNull(),
             'salt' => $this->string()->notNull(),
             'access_token' => $this->string()->notNull(),
-            'create_at_date' => $this->datetime()->notNull(),
+            'create_at_date' => $this->timestamp()->notNull(),
         ], $tableOptions);
 
     }
