@@ -39,9 +39,10 @@ class CalendarSearch extends Calendar
      *
      * @return ActiveDataProvider
      */
-    public function search($params)
+    public function search($params,$id)
     {
-        $query = Calendar::find();
+        $query = Calendar::find()
+                ->where('creator=:creator', [':creator' => $id]);
 
         // add conditions that should always apply here
 
