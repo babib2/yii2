@@ -67,7 +67,7 @@ class CalendarController extends Controller
     public function actionView($id)
     {
         return $this->render('view', [
-            'model' => $this->findModel($id),
+            'model' => $this->findModel($id,Yii::$app->user->identity->id),
         ]);
     }
 
@@ -128,13 +128,15 @@ class CalendarController extends Controller
      * @return Calendar the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
-    protected function findModel($id)
+    protected function findModel($id,$creator)
     {
-        if (($model = Calendar::findOne($id)) !== null) {
+         $model = Calendar::findOne(['creator' => $creator, 'id' => $id]);
+
+        if ($model !== null) {
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
     }
-    
+
 }
