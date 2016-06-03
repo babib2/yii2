@@ -7,33 +7,26 @@ use yii\db\ActiveRecord;
 
 class User extends ActiveRecord implements \yii\web\IdentityInterface
 {
+    const MAX_STRING_NAME = 45;
+    const MIN_STRING_NAME = 3;
+    const MAX_STRING_USERNAME = 128;
+    const MIN_STRING_USERNAME = 3;
+    const MAX_STRING_PASS = 20;
+    const MIN_STRING_PASS = 6;
 
 
     public function rules()
     {
         return [
-            [['username','access_token'], 'required'],
-            ['username', 'match', 'pattern' => '#^[\w_-]+$#i'],
-            ['username', 'unique'],
-            ['username', 'string', 'min' => 3, 'max' => 128],
-
-            ['name', 'required'],
-            ['name', 'match', 'pattern' => '#^[\w_-]+$#i'],
-            ['name', 'string', 'min' => 3, 'max' => 45],
-
-            ['surname', 'required'],
-            ['surname', 'match', 'pattern' => '#^[\w_-]+$#i'],
-            ['surname', 'string', 'min' => 3, 'max' => 45],
-
-            ['password', 'required'],
-            ['password', 'string', 'min' => 6, 'max' => 255],
-
+            [['username', 'name', 'surname', 'password'], 'required'],
+            [['password'], 'string', 'min' => self::MIN_STRING_PASS],
+            [['username', 'access_token'], 'unique']
         ];
     }
 
     public static function tableName ()
     {
-        return 'evrnt_user';
+        return 'clndr_user';
     }
 
     public function attributeLabels ()
@@ -56,10 +49,12 @@ class User extends ActiveRecord implements \yii\web\IdentityInterface
             if ($this->getIsNewRecord() && !empty($this->password))
             {
                 $this->salt = $this->generateSalt();
+                //echo $this->salt;
             }
             if (!empty($this->password))
             {
                 $this->password = $this->passWithSalt($this->password, $this->salt);
+                //echo $this->password . " - pass"; 
             }
             else
             {
@@ -86,8 +81,8 @@ class User extends ActiveRecord implements \yii\web\IdentityInterface
     public static function findIdentityByAccessToken($token, $type = null)
     {
         $accessToken = static::findOne(['access_token' => $token]);
-        if($token)
-            return $token;
+        if($accessToken)
+            return $accessToken;
         
         return null;
     }
@@ -138,22 +133,24 @@ class User extends ActiveRecord implements \yii\web\IdentityInterface
      */
     public function validatePassword($password)
     {
+        echo $this->password === $this->passWithSalt($password, $this->salt) . " - validatePassword";
          return $this->password === $this->passWithSalt($password, $this->salt);
     }
 
     public function setPassword($password)
     {
         $this->password = $this->passWithSalt($password, $this->generateSalt());
-    }
+        echo $this->password . " - setPassword";
+    }   
 
     public function generateSalt()
     {
-          return  Yii::$app->getSecurity()->hkdf('sha512', Yii::$app->security->generateRandomString());
+       return hash("sha512", uniqid('salt_', true));
     }
 
-    public function passWithSalt($password,$salt)
+    public function passWithSalt ($password, $salt)
     {
-        return  Yii::$app->getSecurity()->hkdf('sha512', $password, $salt);
+        return hash("sha512", $password . $salt);
     }
 
     public function generateAuthKey()
