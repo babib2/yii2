@@ -18,6 +18,11 @@ $config = [
             'identityClass' => 'app\models\User',
             'enableAutoLogin' => true,
         ],
+        'calendar' => [
+            'class' => 'app\models\Calendar',
+        ],
+        
+
         'errorHandler' => [
             'errorAction' => 'site/error',
         ],

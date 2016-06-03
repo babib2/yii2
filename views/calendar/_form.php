@@ -2,6 +2,7 @@
 
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
+use yii\bootstrap\DatePicker;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\Calendar */
@@ -14,10 +15,10 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'text')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'creator')->textInput() ?>
-
-    <?= $form->field($model, 'create_at_date')->textInput() ?>
-
+	<?= $form->field($model, 'create_at_date')->widget(\yii\jui\DatePicker::classname(), [
+    	'language' => 'ru',
+    	'dateFormat' => 'yyyy-MM-dd',
+	]) ?>
     <div class="form-group">
         <?= Html::submitButton($model->isNewRecord ? Yii::t('app', 'Create') : Yii::t('app', 'Update'), ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
     </div>

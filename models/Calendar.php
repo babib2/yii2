@@ -12,7 +12,7 @@ use Yii;
  * @property integer $creator
  * @property string $create_at_date
  *
- * @property ClndrUser $creator0
+ * @property User $creator0
  */
 class Calendar extends \yii\db\ActiveRecord
 {
@@ -30,11 +30,11 @@ class Calendar extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['text', 'creator', 'create_at_date'], 'required'],
-            [['creator'], 'integer'],
+            [['text', 'create_at_date'], 'required'],
+            //[['creator'], 'integer'],
             [['create_at_date'], 'safe'],
             [['text'], 'string', 'max' => 255],
-            [['creator'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['creator' => 'id']],
+            //[['creator'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['creator' => 'id']],
         ];
     }
 
@@ -45,10 +45,27 @@ class Calendar extends \yii\db\ActiveRecord
     {
         return [
             'id' => Yii::t('app', 'ID'),
-            'text' => Yii::t('app', 'Text'),
-            'creator' => Yii::t('app', 'Creator'),
-            'create_at_date' => Yii::t('app', 'Create At Date'),
+            'text' => Yii::t('app', 'Название'),
+            'creator' => Yii::t('app', 'Создатель'),
+            'create_at_date' => Yii::t('app', 'Дата исполнения'),
         ];
+    }
+
+
+    public function beforeSave ($insert)
+    {
+        if (parent::beforeSave($insert))
+        {
+            if ($this->getIsNewRecord())
+            {
+                $this->creator = Yii::$app->user->identity->id;
+            }
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
 
     /**
@@ -56,6 +73,6 @@ class Calendar extends \yii\db\ActiveRecord
      */
     public function getCreator0()
     {
-        return $this->hasOne(ClndrUser::className(), ['id' => 'creator']);
+        return $this->hasOne(User::className(), ['id' => 'creator']);
     }
 }
