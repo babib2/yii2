@@ -26,8 +26,15 @@ $this->params['breadcrumbs'][] = $this->title;
 
             'text',
             'create_at_date',
-
-            ['class' => 'yii\grid\ActionColumn'],
+            [
+                'class' => 'yii\grid\ActionColumn',
+                'template' => '{view} {update} {delete} {link}',
+                'buttons' => [
+                    'link' => function ($url,$model,$key) {
+                        return Html::a('Поделиться', $url);
+                    },
+                ],
+            ],
         ],
     ]); ?>
 </div>
