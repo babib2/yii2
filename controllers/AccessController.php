@@ -3,6 +3,8 @@
 namespace app\controllers;
 
 use Yii;
+use app\models\User;
+use app\models\Calendar;
 use app\models\Access;
 use app\models\AccessSearch;
 use yii\web\Controller;
@@ -59,18 +61,28 @@ class AccessController extends Controller
     /**
      * Creates a new Access model.
      * If creation is successful, the browser will be redirected to the 'view' page.
+     * @param integer $id
      * @return mixed
      */
-    public function actionCreate()
+    public function actionCreate($id)
     {
-        $model = new Access();
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
-        } else {
-            return $this->render('create', [
-                'model' => $model,
-            ]);
+        
+        if($this->isMyPost($id))
+        {
+             $model = new Access();
+
+                if ($model->load(Yii::$app->request->post())
+                    && $model->user_guest = findGuest(Yii::$app->request->post()['Access']['user_guest'])
+                    && $model->save()
+                   ) 
+                {
+                    return $this->redirect(['view', 'id' => $model->id]);
+                } else {
+                    return $this->render('create', [
+                        'model' => $model,
+                    ]);
+                }
         }
     }
 
@@ -117,6 +129,30 @@ class AccessController extends Controller
     {
         if (($model = Access::findOne($id)) !== null) {
             return $model;
+        } else {
+            throw new NotFoundHttpException('The requested page does not exist.');
+        }
+    }
+
+    //К своей ли записи открывает доступ
+    protected function isMyPost($id)
+    {   
+        $model = Calendar::findOne(['creator' => Yii::$app->user->identity->id, 'id' => $id]);
+
+
+        if ($model !== null) {
+            return $model;
+        } else {
+            throw new NotFoundHttpException('The requested page does not exist.');
+        }
+    }
+
+    protected function findGuest($username)
+    {
+         $model = User::findOne(['username' => $username]);
+
+        if ($model !== null) {
+            return $model->id;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }

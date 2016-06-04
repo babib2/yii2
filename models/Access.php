@@ -31,11 +31,11 @@ class Access extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['user_owner', 'user_guest', 'create_at_date'], 'required'],
-            [['user_owner', 'user_guest'], 'integer'],
-            [['create_at_date'], 'safe'],
+            [['user_guest'], 'required'],
+            [['user_guest'], 'integer'],
+            //[['create_at_date'], 'safe'],
             [['user_guest'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['user_guest' => 'id']],
-            [['user_owner'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['user_owner' => 'id']],
+            //[['user_owner'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['user_owner' => 'id']],
         ];
     }
 
@@ -46,10 +46,26 @@ class Access extends \yii\db\ActiveRecord
     {
         return [
             'id' => Yii::t('app', 'ID'),
-            'user_owner' => Yii::t('app', 'User Owner'),
-            'user_guest' => Yii::t('app', 'User Guest'),
-            'create_at_date' => Yii::t('app', 'Create At Date'),
+            'user_owner' => Yii::t('app', 'Владелец'),
+            'user_guest' => Yii::t('app', 'Получатель'),
+            'create_at_date' => Yii::t('app', 'Время передачи'),
         ];
+    }
+
+    public function beforeSave ($insert)
+    {
+        if (parent::beforeSave($insert))
+        {
+            if ($this->getIsNewRecord())
+            {
+                $this->user_owner = Yii::$app->user->identity->id;
+            }
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
 
     /**

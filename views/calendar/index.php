@@ -2,6 +2,7 @@
 
 use yii\helpers\Html;
 use yii\grid\GridView;
+use yii\helpers\Url;
 
 /* @var $this yii\web\View */
 /* @var $searchModel app\models\CalendarSearch */
@@ -31,7 +32,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'template' => '{view} {update} {delete} {link}',
                 'buttons' => [
                     'link' => function ($url,$model,$key) {
-                        return Html::a('Поделиться', $url);
+                        return Html::a('Поделиться', Url::to(['/access/create/'.$model->id]));
                     },
                 ],
             ],
