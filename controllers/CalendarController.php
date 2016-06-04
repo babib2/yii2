@@ -67,7 +67,7 @@ class CalendarController extends Controller
     public function actionView($id)
     {
         return $this->render('view', [
-            'model' => $this->findModel($id,Yii::$app->user->identity->id),
+            'model' => $this->findModel($id, Yii::$app->user->identity->id),
         ]);
     }
 
@@ -97,7 +97,7 @@ class CalendarController extends Controller
      */
     public function actionUpdate($id)
     {
-        $model = $this->findModel($id);
+        $model = $this->findModel($id, Yii::$app->user->identity->id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
@@ -116,7 +116,7 @@ class CalendarController extends Controller
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
+        $this->findModel($id, Yii::$app->user->identity->id)->delete();
 
         return $this->redirect(['index']);
     }
